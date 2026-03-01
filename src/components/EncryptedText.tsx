@@ -44,7 +44,7 @@ function generateGibberishPreservingSpaces(
   return result;
 }
 
-function useInViewOnce(ref: React.RefObject<HTMLElement>) {
+function useInViewOnce<T extends HTMLElement>(ref: React.RefObject<T | null>) {
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
@@ -90,7 +90,9 @@ export const EncryptedText: React.FC<EncryptedTextProps> = ({
   useEffect(() => {
     if (!isInView) return;
 
-    const initial = text ? generateGibberishPreservingSpaces(text, charset) : "";
+    const initial = text
+      ? generateGibberishPreservingSpaces(text, charset)
+      : "";
     scrambleCharsRef.current = initial.split("");
     startTimeRef.current = performance.now();
     lastFlipTimeRef.current = startTimeRef.current;
@@ -156,11 +158,11 @@ export const EncryptedText: React.FC<EncryptedTextProps> = ({
           ? char
           : char === " "
             ? " "
-            : scrambleCharsRef.current[index] ??
-              generateRandomCharacter(charset);
+            : (scrambleCharsRef.current[index] ??
+              generateRandomCharacter(charset));
         const perCharClass = isRevealed
           ? revealedClassName
-          : encryptedClassName ?? "text-zinc-500";
+          : (encryptedClassName ?? "text-zinc-500");
         return (
           <span key={index} className={perCharClass}>
             {displayChar}
